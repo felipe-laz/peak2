@@ -1,0 +1,1941 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="Peak" />
+    <meta name="theme-color" content="#000000" />
+    <link rel="manifest" href="/manifest.json" />
+    <title>Peak — 30 Dias</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #000;
+        --s1: #0a0a0a;
+        --s2: #111;
+        --s3: #1a1a1a;
+        --border: rgba(255, 255, 255, 0.07);
+        --border-md: rgba(255, 255, 255, 0.11);
+        --border-lg: rgba(255, 255, 255, 0.18);
+        --text: #ededed;
+        --text-2: #a1a1a1;
+        --text-3: #5c5c5c;
+        --text-4: #2e2e2e;
+        --green: #00dc82;
+        --green-s: rgba(0, 220, 130, 0.1);
+        --green-b: rgba(0, 220, 130, 0.28);
+        --amber: #f5a623;
+        --amber-s: rgba(245, 166, 35, 0.1);
+        --amber-b: rgba(245, 166, 35, 0.3);
+        --red: #ff4444;
+        --red-s: rgba(255, 68, 68, 0.09);
+        --red-b: rgba(255, 68, 68, 0.22);
+        --blue: #3291ff;
+        --blue-s: rgba(50, 145, 255, 0.08);
+        --blue-b: rgba(50, 145, 255, 0.28);
+        --r: 12px;
+        --rsm: 8px;
+      }
+
+      html {
+        height: 100%;
+        overflow-x: hidden;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        min-height: 100%;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      /* ── Header ──────────────────────────────────── */
+      .hdr {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: saturate(180%) blur(20px);
+        -webkit-backdrop-filter: saturate(180%) blur(20px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .hdr-logo {
+        font-size: 16px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .hdr-logo em {
+        color: var(--green);
+        font-style: normal;
+      }
+
+      .hdr-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .sync-wrap {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        color: var(--text-3);
+      }
+      .sync-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--text-4);
+        transition: background 0.4s;
+      }
+      .sync-dot.loading {
+        background: var(--amber);
+        animation: pulse 1.2s infinite;
+      }
+      .sync-dot.synced {
+        background: var(--green);
+      }
+      .sync-dot.offline {
+        background: var(--amber);
+      }
+      .sync-dot.error {
+        background: var(--red);
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+
+      /* ── Layout ──────────────────────────────────── */
+      .page {
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 24px 16px calc(48px + env(safe-area-inset-bottom, 0px));
+      }
+
+      .sec-lbl {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-3);
+        margin-bottom: 12px;
+      }
+
+      .mb {
+        margin-bottom: 28px;
+      }
+
+      /* ── Countdown card ──────────────────────────── */
+      .cdw-card {
+        background: var(--s1);
+        border: 1px solid var(--border-md);
+        border-radius: var(--r);
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .cdw-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--green-b),
+          transparent
+        );
+      }
+
+      .cdw-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .cdw-num {
+        font-size: 64px;
+        font-weight: 800;
+        letter-spacing: -4px;
+        line-height: 1;
+        color: var(--text);
+      }
+
+      .cdw-right {
+        text-align: right;
+        padding-top: 6px;
+      }
+      .cdw-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-2);
+        margin-bottom: 4px;
+      }
+      .cdw-date {
+        font-size: 12px;
+        color: var(--text-3);
+      }
+
+      .cdw-bar-wrap {
+        margin-top: 16px;
+      }
+      .cdw-bar-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      .cdw-bar-lbl {
+        font-size: 11px;
+        color: var(--text-3);
+        font-weight: 500;
+      }
+      .cdw-bar-pct {
+        font-size: 11px;
+        color: var(--green);
+        font-weight: 600;
+      }
+      .cdw-bar {
+        height: 3px;
+        background: var(--border-md);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .cdw-fill {
+        height: 100%;
+        background: var(--green);
+        border-radius: 2px;
+        transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* ── Today card ──────────────────────────────── */
+      .today-card {
+        background: var(--s1);
+        border: 1px solid var(--border-md);
+        border-radius: var(--r);
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+        transition: border-color 0.5s;
+      }
+
+      .today-card.win {
+        border-color: var(--green-b);
+      }
+
+      .today-card.win::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: var(--r);
+        box-shadow: 0 0 40px rgba(0, 220, 130, 0.06);
+        pointer-events: none;
+      }
+
+      .today-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .today-date {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.4px;
+        line-height: 1.2;
+      }
+      .today-sub {
+        font-size: 12px;
+        color: var(--text-3);
+        margin-top: 4px;
+      }
+
+      .day-badge {
+        flex-shrink: 0;
+        font-size: 11px;
+        font-weight: 600;
+        background: var(--green-s);
+        border: 1px solid var(--green-b);
+        color: var(--green);
+        padding: 5px 10px;
+        border-radius: 20px;
+        white-space: nowrap;
+      }
+
+      /* ── Goals grid ──────────────────────────────── */
+      .goals {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      /* Compact toggle cell (half-width) */
+      .toggle-cell {
+        background: var(--s3);
+        border: 1px solid var(--border);
+        border-radius: var(--rsm);
+        padding: 14px;
+        cursor: pointer;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        transition:
+          border-color 0.22s,
+          background 0.22s;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .toggle-cell.on {
+        border-color: var(--green-b);
+        background: var(--green-s);
+      }
+
+      .tcell-lbl {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-3);
+      }
+
+      .tcell-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .ttrack {
+        width: 34px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--s2);
+        border: 1px solid var(--border-md);
+        position: relative;
+        flex-shrink: 0;
+        transition:
+          background 0.25s,
+          border-color 0.25s;
+      }
+
+      .toggle-cell.on .ttrack {
+        background: var(--green);
+        border-color: var(--green);
+      }
+
+      .tthumb {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--text-3);
+        top: 2px;
+        left: 2px;
+        transition:
+          transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+          background 0.25s;
+      }
+
+      .toggle-cell.on .tthumb {
+        transform: translateX(14px);
+        background: #000;
+      }
+
+      .tcell-state {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-4);
+        transition: color 0.22s;
+      }
+
+      .toggle-cell.on .tcell-state {
+        color: var(--green);
+      }
+
+      /* Standard goal cell */
+      .gcell {
+        background: var(--s3);
+        border: 1px solid var(--border);
+        border-radius: var(--rsm);
+        padding: 14px;
+        transition: border-color 0.25s;
+      }
+
+      .gcell.span2 {
+        grid-column: span 2;
+      }
+      .gcell.met {
+        border-color: var(--green-b);
+      }
+
+      .gcell-lbl {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-3);
+        margin-bottom: 8px;
+      }
+
+      .gcell-input {
+        background: none;
+        border: none;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 26px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        width: 100%;
+        outline: none;
+        -webkit-appearance: none;
+        padding: 0;
+      }
+
+      .gcell-input::placeholder {
+        color: var(--text-4);
+      }
+
+      .gcell-unit {
+        font-size: 11px;
+        color: var(--text-3);
+        margin-top: 6px;
+      }
+      .gcell-unit span {
+        color: var(--text-2);
+      }
+
+      .pbar {
+        height: 2px;
+        background: var(--border);
+        border-radius: 2px;
+        margin-top: 10px;
+        overflow: hidden;
+      }
+      .pbar-fill {
+        height: 100%;
+        border-radius: 2px;
+        background: var(--green);
+        transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* Notes textarea */
+      .notes-input {
+        background: none;
+        border: none;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 400;
+        width: 100%;
+        outline: none;
+        resize: none;
+        line-height: 1.6;
+        min-height: 52px;
+        padding: 0;
+      }
+
+      .notes-input::placeholder {
+        color: var(--text-4);
+      }
+
+      .notes-footer {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 6px;
+      }
+      .notes-count {
+        font-size: 10px;
+        color: var(--text-3);
+      }
+
+      /* Save button */
+      .btn {
+        width: 100%;
+        padding: 14px;
+        background: #fff;
+        color: #000;
+        border: none;
+        border-radius: var(--rsm);
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition:
+          opacity 0.15s,
+          transform 0.1s;
+      }
+
+      .btn:active {
+        opacity: 0.72;
+        transform: scale(0.98);
+      }
+      .btn:disabled {
+        opacity: 0.35;
+        cursor: default;
+        transform: none;
+      }
+
+      /* ── Weekly card ─────────────────────────────── */
+      .weekly-card {
+        background: var(--s1);
+        border: 1px solid var(--border-md);
+        border-radius: var(--r);
+        padding: 18px;
+      }
+
+      .weekly-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+      .weekly-title {
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: -0.2px;
+      }
+      .weekly-sub {
+        font-size: 12px;
+        color: var(--text-3);
+      }
+
+      .weekly-chips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+
+      .chip {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 20px;
+        background: var(--s3);
+        border: 1px solid var(--border);
+        color: var(--text-2);
+        white-space: nowrap;
+      }
+
+      .chip.g {
+        background: var(--green-s);
+        border-color: var(--green-b);
+        color: var(--green);
+      }
+
+      .spark-block {
+        margin-bottom: 14px;
+      }
+      .spark-block:last-child {
+        margin-bottom: 0;
+      }
+
+      .spark-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+      }
+      .spark-lbl {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-3);
+      }
+      .spark-avg {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-2);
+      }
+
+      .spark-svg {
+        display: block;
+        width: 100%;
+        overflow: visible;
+      }
+
+      /* ── Stats ───────────────────────────────────── */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      .sbox {
+        background: var(--s1);
+        border: 1px solid var(--border);
+        border-radius: var(--rsm);
+        padding: 14px 10px;
+        text-align: center;
+      }
+
+      .sval {
+        font-size: 26px;
+        font-weight: 700;
+        letter-spacing: -1px;
+        line-height: 1;
+      }
+      .sval.g {
+        color: var(--green);
+      }
+      .slbl {
+        font-size: 10px;
+        font-weight: 500;
+        color: var(--text-3);
+        margin-top: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      /* ── Legend ──────────────────────────────────── */
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        margin-bottom: 14px;
+      }
+      .leg {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        color: var(--text-3);
+      }
+      .ldot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      /* ── Calendar ────────────────────────────────── */
+      .cal {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 7px;
+      }
+
+      .cday {
+        background: var(--s1);
+        border: 1px solid var(--border);
+        border-radius: var(--rsm);
+        padding: 10px 6px 8px;
+        text-align: center;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition:
+          border-color 0.2s,
+          background 0.2s,
+          opacity 0.2s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        min-height: 74px;
+      }
+
+      .cday:active:not(.cfuture) {
+        opacity: 0.6;
+      }
+
+      /* Status variants */
+      .cday.ctoday {
+        border-color: var(--blue-b);
+        background: var(--blue-s);
+      }
+      .cday.cwin {
+        border-color: var(--green-b);
+        background: var(--green-s);
+      }
+      .cday.cpartial {
+        border-color: var(--amber-b);
+        background: var(--amber-s);
+      }
+      .cday.cmiss {
+        border-color: var(--red-b);
+        background: var(--red-s);
+      }
+      .cday.cfuture {
+        opacity: 0.25;
+        cursor: default;
+        pointer-events: none;
+      }
+      .cday.ccomp {
+        border-color: var(--amber-b) !important;
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      /* today + win overrides to green */
+      .cday.ctoday.cwin {
+        border-color: var(--green-b);
+        background: var(--green-s);
+      }
+
+      .cnum {
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        color: var(--text);
+        line-height: 1;
+      }
+      .cdate {
+        font-size: 8px;
+        font-weight: 500;
+        color: var(--text-3);
+      }
+
+      .cdots {
+        display: flex;
+        gap: 3px;
+        margin-top: 2px;
+      }
+      .dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+      }
+      .dg {
+        background: var(--green);
+      }
+      .da {
+        background: var(--amber);
+      }
+      .dr {
+        background: var(--red);
+      }
+
+      .ccomp-lbl {
+        font-size: 7px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--amber);
+        margin-top: 1px;
+      }
+
+      /* ── Bottom sheet ────────────────────────────── */
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.72);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        z-index: 100;
+        display: flex;
+        align-items: flex-end;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+      }
+
+      .overlay.open {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .sheet {
+        background: var(--s1);
+        border: 1px solid var(--border-md);
+        border-bottom: none;
+        border-radius: 20px 20px 0 0;
+        width: 100%;
+        max-height: 92vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 0 20px calc(24px + env(safe-area-inset-bottom, 0px));
+        transform: translateY(100%);
+        transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
+      }
+
+      .overlay.open .sheet {
+        transform: translateY(0);
+      }
+
+      .sheet-handle {
+        width: 36px;
+        height: 4px;
+        border-radius: 2px;
+        background: var(--border-lg);
+        margin: 12px auto 20px;
+      }
+
+      .sheet-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .sheet-title {
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+      }
+
+      .sheet-close {
+        width: 28px;
+        height: 28px;
+        background: var(--s3);
+        border: 1px solid var(--border-md);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        font-size: 13px;
+        color: var(--text-2);
+        flex-shrink: 0;
+      }
+
+      /* ── Toast ───────────────────────────────────── */
+      .toast {
+        position: fixed;
+        bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+        left: 50%;
+        transform: translateX(-50%) translateY(72px);
+        background: var(--green);
+        color: #000;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 10px 18px;
+        border-radius: 20px;
+        z-index: 200;
+        transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+        white-space: nowrap;
+        pointer-events: none;
+      }
+
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* ── Loading skeleton ────────────────────────── */
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          var(--s2) 25%,
+          var(--s3) 50%,
+          var(--s2) 75%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.4s infinite;
+        border-radius: 4px;
+        color: transparent !important;
+        pointer-events: none;
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      /* ── Responsive ──────────────────────────────── */
+      @media (max-width: 360px) {
+        .cal {
+          gap: 5px;
+        }
+        .cday {
+          min-height: 62px;
+          padding: 8px 4px 6px;
+        }
+        .cnum {
+          font-size: 13px;
+        }
+        .cdw-num {
+          font-size: 52px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── Header ─────────────────────────────────────────────── -->
+    <header class="hdr">
+      <div class="hdr-logo">Peak<em>.</em></div>
+      <div class="hdr-right">
+        <div class="sync-wrap">
+          <div class="sync-dot loading" id="syncDot"></div>
+          <span id="syncLbl">conectando</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="page">
+      <!-- ── Countdown ──────────────────────────────────────────── -->
+      <div class="sec-lbl">Preparacao</div>
+      <div class="cdw-card mb">
+        <div class="cdw-top">
+          <div class="cdw-num" id="cdwNum">--</div>
+          <div class="cdw-right">
+            <div class="cdw-label">dias para o WOD</div>
+            <div class="cdw-date">21 de Marco · 2026</div>
+          </div>
+        </div>
+        <div class="cdw-bar-wrap">
+          <div class="cdw-bar-row">
+            <span class="cdw-bar-lbl" id="cdwLbl">Dia -- de 30</span>
+            <span class="cdw-bar-pct" id="cdwPct">0%</span>
+          </div>
+          <div class="cdw-bar">
+            <div class="cdw-fill" id="cdwFill" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Today ──────────────────────────────────────────────── -->
+      <div class="sec-lbl">Hoje</div>
+      <div class="today-card mb" id="todayCard">
+        <div class="today-head">
+          <div>
+            <div class="today-date" id="todayDate">--</div>
+            <div class="today-sub" id="todaySub">--</div>
+          </div>
+          <div class="day-badge" id="todayBadge">Dia --</div>
+        </div>
+
+        <div class="goals">
+          <!-- Sober -->
+          <div class="toggle-cell" id="soberMain">
+            <div class="tcell-lbl">Sem Alcool</div>
+            <div class="tcell-row">
+              <div class="ttrack"><div class="tthumb"></div></div>
+              <span class="tcell-state">Nao</span>
+            </div>
+          </div>
+
+          <!-- Creatina -->
+          <div class="toggle-cell" id="creatMain">
+            <div class="tcell-lbl">Creatina</div>
+            <div class="tcell-row">
+              <div class="ttrack"><div class="tthumb"></div></div>
+              <span class="tcell-state">Nao</span>
+            </div>
+          </div>
+
+          <!-- Protein -->
+          <div class="gcell" id="protCell">
+            <div class="gcell-lbl">Proteina</div>
+            <input
+              class="gcell-input"
+              type="number"
+              id="protIn"
+              placeholder="0"
+              min="0"
+              max="500"
+              inputmode="numeric"
+            />
+            <div class="gcell-unit">g &mdash; <span>meta 180g</span></div>
+            <div class="pbar">
+              <div class="pbar-fill" id="protBar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Sleep -->
+          <div class="gcell" id="sleepCell">
+            <div class="gcell-lbl">Sono</div>
+            <input
+              class="gcell-input"
+              type="number"
+              id="sleepIn"
+              placeholder="0"
+              min="0"
+              max="24"
+              step="0.5"
+              inputmode="decimal"
+            />
+            <div class="gcell-unit">h &mdash; <span>meta 7h</span></div>
+            <div class="pbar">
+              <div class="pbar-fill" id="sleepBar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Water -->
+          <div class="gcell" id="waterCell">
+            <div class="gcell-lbl">Agua</div>
+            <input
+              class="gcell-input"
+              type="number"
+              id="waterIn"
+              placeholder="0"
+              min="0"
+              max="20"
+              step="0.5"
+              inputmode="decimal"
+            />
+            <div class="gcell-unit">L &mdash; <span>meta 3L</span></div>
+            <div class="pbar">
+              <div class="pbar-fill" id="waterBar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Calories -->
+          <div class="gcell span2">
+            <div class="gcell-lbl">Calorias no Treino</div>
+            <input
+              class="gcell-input"
+              type="number"
+              id="calIn"
+              placeholder="0"
+              min="0"
+              max="9999"
+              inputmode="numeric"
+            />
+            <div class="gcell-unit">kcal gastas</div>
+          </div>
+
+          <!-- Notes -->
+          <div class="gcell span2">
+            <div class="gcell-lbl">Notas do Dia</div>
+            <textarea
+              class="notes-input"
+              id="notesIn"
+              placeholder="Como foi o dia? Observacoes..."
+              rows="2"
+              maxlength="140"
+            ></textarea>
+            <div class="notes-footer">
+              <span class="notes-count"
+                ><span id="notesCount">0</span>/140</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <button class="btn" id="saveMainBtn">Salvar Dia</button>
+      </div>
+
+      <!-- ── Weekly summary ─────────────────────────────────────── -->
+      <div class="sec-lbl">Esta Semana</div>
+      <div class="weekly-card mb" id="weeklyCard">
+        <div class="weekly-head">
+          <div class="weekly-title" id="weeklyTitle">--</div>
+          <div class="weekly-sub" id="weeklySub">ultimos 7 dias</div>
+        </div>
+        <div class="weekly-chips" id="weeklyChips"></div>
+        <div class="spark-block">
+          <div class="spark-header">
+            <span class="spark-lbl">Proteina</span>
+            <span class="spark-avg" id="sparkProtAvg">-- g</span>
+          </div>
+          <div id="sparkProt"></div>
+        </div>
+        <div class="spark-block">
+          <div class="spark-header">
+            <span class="spark-lbl">Sono</span>
+            <span class="spark-avg" id="sparkSleepAvg">-- h</span>
+          </div>
+          <div id="sparkSleep"></div>
+        </div>
+        <div class="spark-block">
+          <div class="spark-header">
+            <span class="spark-lbl">Agua</span>
+            <span class="spark-avg" id="sparkWaterAvg">-- L</span>
+          </div>
+          <div id="sparkWater"></div>
+        </div>
+      </div>
+
+      <!-- ── Stats ──────────────────────────────────────────────── -->
+      <div class="sec-lbl">Desempenho Geral</div>
+      <div class="stats mb">
+        <div class="sbox">
+          <div class="sval g" id="stStreak">0</div>
+          <div class="slbl">Sequencia</div>
+        </div>
+        <div class="sbox">
+          <div class="sval" id="stWins">0</div>
+          <div class="slbl">Perfeitos</div>
+        </div>
+        <div class="sbox">
+          <div class="sval" id="stProt">--</div>
+          <div class="slbl">Prot. Media</div>
+        </div>
+      </div>
+
+      <!-- ── Calendar ───────────────────────────────────────────── -->
+      <div class="sec-lbl">Calendario — 30 Dias</div>
+      <div class="legend">
+        <div class="leg">
+          <div class="ldot" style="background: var(--green)"></div>
+          Perfeito
+        </div>
+        <div class="leg">
+          <div class="ldot" style="background: var(--amber)"></div>
+          Parcial
+        </div>
+        <div class="leg">
+          <div class="ldot" style="background: var(--red)"></div>
+          Perdido
+        </div>
+        <div class="leg">
+          <div class="ldot" style="background: var(--blue)"></div>
+          Hoje
+        </div>
+      </div>
+      <div class="cal mb" id="cal"></div>
+    </main>
+
+    <!-- ── Bottom sheet ───────────────────────────────────────── -->
+    <div class="overlay" id="overlay">
+      <div class="sheet" id="sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-head">
+          <div class="sheet-title" id="sheetTitle">--</div>
+          <div class="sheet-close" id="sheetClose">&#10005;</div>
+        </div>
+
+        <div class="goals">
+          <div class="toggle-cell" id="soberModal">
+            <div class="tcell-lbl">Sem Alcool</div>
+            <div class="tcell-row">
+              <div class="ttrack"><div class="tthumb"></div></div>
+              <span class="tcell-state">Nao</span>
+            </div>
+          </div>
+
+          <div class="toggle-cell" id="creatModal">
+            <div class="tcell-lbl">Creatina</div>
+            <div class="tcell-row">
+              <div class="ttrack"><div class="tthumb"></div></div>
+              <span class="tcell-state">Nao</span>
+            </div>
+          </div>
+
+          <div class="gcell" id="mProtCell">
+            <div class="gcell-lbl">Proteina</div>
+            <input
+              class="gcell-input"
+              type="number"
+              id="mProtIn"
+              placeholder="0"
+              min="0"
+              max="500"
+              inputmode="numeric"
+            />
+            <div class="gcell-unit">g &mdash; <span>meta 180g</span></div>
+            <div class="pbar">
+              <div class="pbar-fill" id="mProtBar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="gcell" id="mSleepCell">
+            <div class="gcell-lbl">Sono</div>
+            <input
+              class="gcell-input"
+              type="number"
+              id="mSleepIn"
+              placeholder="0"
+              min="0"
+              max="24"
+              step="0.5"
+              inputmode="decimal"
+            />
+            <div class="gcell-unit">h &mdash; <span>meta 7h</span></div>
+            <div class="pbar">
+              <div class="pbar-fill" id="mSleepBar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="gcell" id="mWaterCell">
+            <div class="gcell-lbl">Agua</div>
+            <input
+              class="gcell-input"
+              type="number"
+              id="mWaterIn"
+              placeholder="0"
+              min="0"
+              max="20"
+              step="0.5"
+              inputmode="decimal"
+            />
+            <div class="gcell-unit">L &mdash; <span>meta 3L</span></div>
+            <div class="pbar">
+              <div class="pbar-fill" id="mWaterBar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="gcell span2">
+            <div class="gcell-lbl">Calorias no Treino</div>
+            <input
+              class="gcell-input"
+              type="number"
+              id="mCalIn"
+              placeholder="0"
+              min="0"
+              max="9999"
+              inputmode="numeric"
+            />
+            <div class="gcell-unit">kcal gastas</div>
+          </div>
+
+          <div class="gcell span2">
+            <div class="gcell-lbl">Notas do Dia</div>
+            <textarea
+              class="notes-input"
+              id="mNotesIn"
+              placeholder="Como foi o dia? Observacoes..."
+              rows="2"
+              maxlength="140"
+            ></textarea>
+            <div class="notes-footer">
+              <span class="notes-count"
+                ><span id="mNotesCount">0</span>/140</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <button class="btn" id="sheetBtn">Salvar Dia</button>
+      </div>
+    </div>
+
+    <!-- ── Toast ──────────────────────────────────────────────── -->
+    <div class="toast" id="toast"></div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+      import {
+        initializeFirestore,
+        persistentLocalCache,
+        collection,
+        doc,
+        setDoc,
+        onSnapshot,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+      /* ── Firebase ──────────────────────────────────────────── */
+      const firebaseConfig = {
+        apiKey: "AIzaSyCQAp_eIn27MEmSJMw4t8jrcOc13t6ou2I",
+        authDomain: "peak-e1e59.firebaseapp.com",
+        projectId: "peak-e1e59",
+        storageBucket: "peak-e1e59.firebasestorage.app",
+        messagingSenderId: "535257642877",
+        appId: "1:535257642877:web:3893feefedbf2dd7bb7e14",
+      };
+
+      const fbApp = initializeApp(firebaseConfig);
+      const fsdb = initializeFirestore(fbApp, {
+        localCache: persistentLocalCache(),
+      });
+
+      /* ── Constants ─────────────────────────────────────────── */
+      const START = new Date("2026-02-21T00:00:00");
+      const COMP = new Date("2026-03-21T00:00:00");
+      const N = 30; // Days in challenge (Feb21 → Mar22; comp = day 29)
+      const PG = 180; // Protein goal (g)
+      const SG = 7; // Sleep goal (h)
+      const WG = 3; // Water goal (L)
+
+      /* ── State ─────────────────────────────────────────────── */
+      const allDays = {}; // { 'YYYY-MM-DD': record }
+      let mainSober = false;
+      let mainCreat = false;
+      let modalSober = false;
+      let modalCreat = false;
+      let sheetKey = null;
+      let toastTimer = null;
+      let firstLoad = true;
+
+      /* ── DOM helper ────────────────────────────────────────── */
+      const $ = (id) => document.getElementById(id);
+
+      /* ── Utils ─────────────────────────────────────────────── */
+      function toKey(d) {
+        return [
+          d.getFullYear(),
+          String(d.getMonth() + 1).padStart(2, "0"),
+          String(d.getDate()).padStart(2, "0"),
+        ].join("-");
+      }
+
+      function today() {
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        return d;
+      }
+
+      function addDays(base, n) {
+        const d = new Date(base);
+        d.setDate(d.getDate() + n);
+        return d;
+      }
+
+      function dayIdx(d) {
+        return Math.round((d - START) / 864e5);
+      }
+
+      function isWin(r) {
+        return !!(r && r.saved && r.sober && r.protein >= PG && r.sleep >= SG && r.water >= WG);
+      }
+
+      function isPartial(r) {
+        if (!r || !r.saved) return false;
+        const hits = [r.sober, r.protein >= PG, r.sleep >= SG, r.water >= WG].filter(
+          Boolean,
+        ).length;
+        return hits > 0 && hits < 4;
+      }
+
+      function fmtShort(d) {
+        return d.toLocaleDateString("pt-BR", {
+          day: "numeric",
+          month: "short",
+        });
+      }
+
+      /* ── Validation (clamp + toast feedback) ────────────────── */
+      function clampNum(val, min, max) {
+        const n = parseFloat(val);
+        if (isNaN(n) || n < min) return 0;
+        return Math.min(max, n);
+      }
+
+      /* ── Sync status ───────────────────────────────────────── */
+      function setSyncStatus(status) {
+        const dot = $("syncDot");
+        const lbl = $("syncLbl");
+        dot.className = `sync-dot ${status}`;
+        const labels = {
+          loading: "conectando",
+          synced: "sincronizado",
+          offline: "offline",
+          error: "erro",
+        };
+        lbl.textContent = labels[status] || status;
+      }
+
+      /* ── Online/offline detection ──────────────────────────── */
+      window.addEventListener("online", () => setSyncStatus("synced"));
+      window.addEventListener("offline", () => setSyncStatus("offline"));
+
+      /* ── Firebase listener ─────────────────────────────────── */
+      const cRef = collection(fsdb, "peak30");
+
+      onSnapshot(
+        cRef,
+        (snap) => {
+          snap.docChanges().forEach((change) => {
+            if (change.type === "removed") delete allDays[change.doc.id];
+            else allDays[change.doc.id] = change.doc.data();
+          });
+
+          if (firstLoad) {
+            firstLoad = false;
+            loadTodayForm();
+          }
+
+          render();
+          setSyncStatus("synced");
+        },
+        (err) => {
+          console.error("Firestore error:", err);
+          setSyncStatus("error");
+        },
+      );
+
+      /* ── Progress bars ─────────────────────────────────────── */
+      function updateProt(ctx) {
+        const [inp, bar, cell] =
+          ctx === "main"
+            ? [$("protIn"), $("protBar"), $("protCell")]
+            : [$("mProtIn"), $("mProtBar"), $("mProtCell")];
+        const v = parseFloat(inp.value) || 0;
+        bar.style.width = Math.min(100, (v / PG) * 100) + "%";
+        cell.classList.toggle("met", v >= PG);
+      }
+
+      function updateSleep(ctx) {
+        const [inp, bar, cell] =
+          ctx === "main"
+            ? [$("sleepIn"), $("sleepBar"), $("sleepCell")]
+            : [$("mSleepIn"), $("mSleepBar"), $("mSleepCell")];
+        const v = parseFloat(inp.value) || 0;
+        bar.style.width = Math.min(100, (v / SG) * 100) + "%";
+        cell.classList.toggle("met", v >= SG);
+      }
+
+      function updateWater(ctx) {
+        const [inp, bar, cell] =
+          ctx === "main"
+            ? [$("waterIn"), $("waterBar"), $("waterCell")]
+            : [$("mWaterIn"), $("mWaterBar"), $("mWaterCell")];
+        const v = parseFloat(inp.value) || 0;
+        bar.style.width = Math.min(100, (v / WG) * 100) + "%";
+        cell.classList.toggle("met", v >= WG);
+      }
+
+      /* ── Toggle handler ────────────────────────────────────── */
+      function toggle(elId, getState, setState) {
+        const newVal = !getState();
+        setState(newVal);
+        const el = $(elId);
+        el.classList.toggle("on", newVal);
+        el.querySelector(".tcell-state").textContent = newVal ? "Sim" : "Nao";
+      }
+
+      function setToggle(elId, val) {
+        const el = $(elId);
+        el.classList.toggle("on", val);
+        el.querySelector(".tcell-state").textContent = val ? "Sim" : "Nao";
+      }
+
+      /* ── Save ──────────────────────────────────────────────── */
+      async function save(ctx) {
+        const key = ctx === "main" ? toKey(today()) : sheetKey;
+
+        const rawProt =
+          parseFloat(ctx === "main" ? $("protIn").value : $("mProtIn").value) ||
+          0;
+        const rawSleep =
+          parseFloat(
+            ctx === "main" ? $("sleepIn").value : $("mSleepIn").value,
+          ) || 0;
+        const rawCal =
+          parseFloat(ctx === "main" ? $("calIn").value : $("mCalIn").value) ||
+          0;
+        const rawWater =
+          parseFloat(ctx === "main" ? $("waterIn").value : $("mWaterIn").value) ||
+          0;
+        const notes = (
+          ctx === "main" ? $("notesIn").value : $("mNotesIn").value
+        )
+          .trim()
+          .slice(0, 140);
+
+        const protein = clampNum(rawProt, 0, 500);
+        const sleep = clampNum(rawSleep, 0, 24);
+        const calories = clampNum(rawCal, 0, 9999);
+        const water = clampNum(rawWater, 0, 20);
+        const sober = ctx === "main" ? mainSober : modalSober;
+        const creatina = ctx === "main" ? mainCreat : modalCreat;
+
+        // Clamping feedback
+        if (rawProt > 500) showToast("Proteina ajustada para 500g.");
+        if (rawSleep > 24) showToast("Sono ajustado para 24h.");
+        if (rawCal > 9999) showToast("Calorias ajustadas para 9999 kcal.");
+        if (rawWater > 20) showToast("Agua ajustada para 20L.");
+
+        const record = {
+          sober,
+          creatina,
+          protein,
+          sleep,
+          calories,
+          water,
+          notes,
+          saved: true,
+        };
+
+        // Optimistic update
+        allDays[key] = record;
+        if (ctx === "main") refreshTodayWin();
+        else closeSheet();
+
+        render();
+
+        try {
+          await setDoc(doc(fsdb, "peak30", key), {
+            ...record,
+            savedAt: serverTimestamp(),
+          });
+        } catch (err) {
+          console.error("Save failed:", err);
+          showToast("Erro ao salvar. Dados em cache local.");
+        }
+
+        const perfect = isWin(record);
+        showToast(
+          perfect
+            ? "Dia perfeito! Sequencia mantida."
+            : "Dia registrado com sucesso.",
+        );
+      }
+
+      /* ── Load today's existing data into the form ───────────── */
+      function loadTodayForm() {
+        const r = allDays[toKey(today())];
+        if (!r) return;
+
+        mainSober = !!r.sober;
+        mainCreat = !!r.creatina;
+        setToggle("soberMain", mainSober);
+        setToggle("creatMain", mainCreat);
+
+        if (r.protein) {
+          $("protIn").value = r.protein;
+          updateProt("main");
+        }
+        if (r.sleep) {
+          $("sleepIn").value = r.sleep;
+          updateSleep("main");
+        }
+        if (r.water) {
+          $("waterIn").value = r.water;
+          updateWater("main");
+        }
+        if (r.calories) {
+          $("calIn").value = r.calories;
+        }
+        if (r.notes) {
+          $("notesIn").value = r.notes;
+          $("notesCount").textContent = r.notes.length;
+        }
+      }
+
+      function refreshTodayWin() {
+        $("todayCard").classList.toggle("win", isWin(allDays[toKey(today())]));
+      }
+
+      /* ── Countdown ─────────────────────────────────────────── */
+      function renderCountdown() {
+        const t = today();
+        const diff = Math.ceil((COMP - t) / 864e5);
+        const idx = dayIdx(t); // 0-based current day index
+        const done = Math.max(0, idx); // days completed so far
+        const pct = Math.round((done / (N - 1)) * 100);
+
+        $("cdwNum").textContent = Math.max(0, diff);
+        $("cdwLbl").textContent = `Dia ${Math.min(idx + 1, N)} de ${N}`;
+        $("cdwPct").textContent = `${pct}%`;
+        $("cdwFill").style.width = `${pct}%`;
+      }
+
+      /* ── Today header ──────────────────────────────────────── */
+      function renderTodayHeader() {
+        const t = today();
+        const idx = dayIdx(t);
+        const weekday = t.toLocaleDateString("pt-BR", { weekday: "long" });
+        const dateStr = t.toLocaleDateString("pt-BR", {
+          day: "numeric",
+          month: "long",
+        });
+        $("todayDate").textContent =
+          weekday.charAt(0).toUpperCase() + weekday.slice(1);
+        $("todaySub").textContent = dateStr;
+        $("todayBadge").textContent = `Dia ${idx + 1}`;
+      }
+
+      /* ── Sparkline SVG ─────────────────────────────────────── */
+      function buildSparkline(points, goal, color) {
+        const W = 300,
+          H = 40,
+          PAD = 6;
+        const n = points.length;
+        if (!n) return "";
+
+        const maxVal = Math.max(goal * 1.3, ...points.map((p) => p.val));
+        const toX = (i) =>
+          PAD + (n === 1 ? W / 2 - PAD : (i / (n - 1)) * (W - PAD * 2));
+        const toY = (v) => H - PAD - Math.max(0, (v / maxVal) * (H - PAD * 2));
+        const goalY = toY(goal).toFixed(1);
+
+        // Build path only through saved points
+        const savedPts = [];
+        let pathD = "";
+        points.forEach((p, i) => {
+          if (!p.saved) return;
+          const x = toX(i).toFixed(1),
+            y = toY(p.val).toFixed(1);
+          savedPts.push([x, y]);
+          pathD += savedPts.length === 1 ? `M ${x} ${y}` : ` L ${x} ${y}`;
+        });
+
+        const dots = points
+          .map((p, i) => {
+            const x = toX(i).toFixed(1);
+            const y = p.saved ? toY(p.val).toFixed(1) : (H - PAD).toFixed(1);
+            const r = p.saved ? 3.5 : 2;
+            const fill = !p.saved
+              ? "rgba(255,255,255,0.08)"
+              : p.val >= goal
+                ? color
+                : p.val > 0
+                  ? "#f5a623"
+                  : "rgba(255,68,68,0.6)";
+            return `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}"/>`;
+          })
+          .join("");
+
+        return `<svg class="spark-svg" viewBox="0 0 ${W} ${H}" style="height:${H}px">
+        <line x1="${PAD}" y1="${goalY}" x2="${W - PAD}" y2="${goalY}"
+          stroke="rgba(255,255,255,0.09)" stroke-width="1" stroke-dasharray="3,3"/>
+        ${pathD ? `<path d="${pathD}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.55"/>` : ""}
+        ${dots}
+      </svg>`;
+      }
+
+      /* ── Weekly summary ────────────────────────────────────── */
+      function renderWeekly() {
+        const t = today();
+        const idx = dayIdx(t);
+
+        // Collect last 7 days (or fewer if challenge just started)
+        const startI = Math.max(0, idx - 6);
+        const window7 = [];
+
+        for (let i = startI; i <= idx; i++) {
+          const d = addDays(START, i);
+          const r = allDays[toKey(d)];
+          window7.push({
+            saved: !!(r && r.saved),
+            val: 0, // placeholder, set per metric
+            prot: r?.protein || 0,
+            sleep: r?.sleep || 0,
+            water: r?.water || 0,
+            win: isWin(r),
+          });
+        }
+
+        const savedW = window7.filter((p) => p.saved);
+        const wins = window7.filter((p) => p.win).length;
+        const avgProt = savedW.length
+          ? Math.round(savedW.reduce((s, p) => s + p.prot, 0) / savedW.length)
+          : null;
+        const avgSleep = savedW.length
+          ? (savedW.reduce((s, p) => s + p.sleep, 0) / savedW.length).toFixed(1)
+          : null;
+        const avgWater = savedW.length
+          ? (savedW.reduce((s, p) => s + p.water, 0) / savedW.length).toFixed(1)
+          : null;
+
+        $("weeklyTitle").textContent = savedW.length
+          ? `${wins}/${window7.length} dias perfeitos`
+          : "Sem dados ainda";
+
+        // Chips
+        const chips = [];
+        if (avgProt !== null)
+          chips.push({ label: `${avgProt}g proteina`, good: avgProt >= PG });
+        if (avgSleep !== null)
+          chips.push({ label: `${avgSleep}h sono`, good: avgSleep >= SG });
+        if (avgWater !== null)
+          chips.push({ label: `${avgWater}L agua`, good: avgWater >= WG });
+        $("weeklyChips").innerHTML = chips
+          .map((c) => `<div class="chip ${c.good ? "g" : ""}">${c.label}</div>`)
+          .join("");
+
+        // Sparklines
+        const protPts = window7.map((p) => ({ saved: p.saved, val: p.prot }));
+        const sleepPts = window7.map((p) => ({ saved: p.saved, val: p.sleep }));
+        const waterPts = window7.map((p) => ({ saved: p.saved, val: p.water }));
+
+        $("sparkProt").innerHTML = buildSparkline(protPts, PG, "var(--green)");
+        $("sparkSleep").innerHTML = buildSparkline(sleepPts, SG, "var(--blue)");
+        $("sparkWater").innerHTML = buildSparkline(waterPts, WG, "var(--blue)");
+
+        $("sparkProtAvg").textContent =
+          avgProt !== null ? `media ${avgProt}g` : "--";
+        $("sparkSleepAvg").textContent =
+          avgSleep !== null ? `media ${avgSleep}h` : "--";
+        $("sparkWaterAvg").textContent =
+          avgWater !== null ? `media ${avgWater}L` : "--";
+      }
+
+      /* ── Stats ─────────────────────────────────────────────── */
+      function renderStats() {
+        const t = today();
+        const todK = toKey(t);
+        let wins = 0,
+          streak = 0,
+          totalP = 0,
+          pDays = 0;
+
+        // Count streak from most recent day backwards, skip today if not saved yet
+        let streakBroken = false;
+        for (let i = Math.min(N - 1, dayIdx(t)); i >= 0; i--) {
+          const key = toKey(addDays(START, i));
+          const r = allDays[key];
+
+          // Skip today if not saved — don't break the streak
+          if (key === todK && (!r || !r.saved)) continue;
+
+          if (!streakBroken) {
+            if (isWin(r)) streak++;
+            else streakBroken = true;
+          }
+        }
+
+        for (let i = 0; i < N; i++) {
+          const d = addDays(START, i);
+          if (d > t) break;
+          const r = allDays[toKey(d)];
+          if (isWin(r)) wins++;
+          if (r?.protein > 0) {
+            totalP += r.protein;
+            pDays++;
+          }
+        }
+
+        $("stStreak").textContent = streak;
+        $("stWins").textContent = wins;
+        $("stProt").textContent =
+          pDays > 0 ? Math.round(totalP / pDays) + "g" : "--";
+      }
+
+      /* ── Calendar ──────────────────────────────────────────── */
+      function renderCal() {
+        const grid = $("cal");
+        const t = today();
+        const todKey = toKey(t);
+        const compKey = toKey(COMP);
+        grid.innerHTML = "";
+
+        for (let i = 0; i < N; i++) {
+          const d = addDays(START, i);
+          const key = toKey(d);
+          const r = allDays[key];
+          const isToday = key === todKey;
+          const isFuture = d > t;
+          const isComp = key === compKey;
+
+          const el = document.createElement("div");
+          el.className = "cday";
+
+          if (isToday) {
+            el.classList.add("ctoday");
+            // Only add win/partial/miss if data was actually saved today
+            if (r?.saved) {
+              if (isWin(r)) el.classList.add("cwin");
+              else if (isPartial(r)) el.classList.add("cpartial");
+              else el.classList.add("cmiss");
+            }
+          } else if (isFuture) {
+            el.classList.add("cfuture");
+          } else if (!r || !r.saved) {
+            el.classList.add("cmiss");
+          } else if (isWin(r)) {
+            el.classList.add("cwin");
+          } else if (isPartial(r)) {
+            el.classList.add("cpartial");
+          } else {
+            el.classList.add("cmiss");
+          }
+
+          if (isComp) el.classList.add("ccomp");
+
+          // Dots: sober · protein · sleep · water
+          let dots = "";
+          if (r?.saved) {
+            const dc = (cls) => `<div class="dot ${cls}"></div>`;
+            dots = `<div class="cdots">
+            ${dc(r.sober ? "dg" : "dr")}
+            ${dc(r.protein >= PG ? "dg" : r.protein > 0 ? "da" : "dr")}
+            ${dc(r.sleep >= SG ? "dg" : r.sleep > 0 ? "da" : "dr")}
+            ${dc(r.water >= WG ? "dg" : r.water > 0 ? "da" : "dr")}
+          </div>`;
+          }
+
+          el.innerHTML = `
+          <div class="cnum">${i + 1}</div>
+          <div class="cdate">${d.getDate()}/${d.getMonth() + 1}</div>
+          ${dots}
+          ${isComp ? '<div class="ccomp-lbl">WOD</div>' : ""}
+        `;
+
+          // Interaction: today scrolls up, past/comp opens sheet
+          if (!isFuture || isComp) {
+            el.addEventListener("click", () => {
+              if (isToday) {
+                $("todayCard").scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+              } else {
+                openSheet(key, i + 1, d, isFuture);
+              }
+            });
+          }
+
+          grid.appendChild(el);
+        }
+      }
+
+      /* ── Main render ───────────────────────────────────────── */
+      function render() {
+        renderCountdown();
+        renderTodayHeader();
+        refreshTodayWin();
+        renderWeekly();
+        renderStats();
+        renderCal();
+      }
+
+      /* ── Sheet ─────────────────────────────────────────────── */
+      function openSheet(key, dayNum, d, isFuture) {
+        sheetKey = key;
+        const r = allDays[key];
+
+        $("sheetTitle").textContent = `Dia ${dayNum} \u2014 ${fmtShort(d)}`;
+
+        modalSober = !!r?.sober;
+        modalCreat = !!r?.creatina;
+        setToggle("soberModal", modalSober);
+        setToggle("creatModal", modalCreat);
+
+        $("mProtIn").value = r?.protein || "";
+        $("mSleepIn").value = r?.sleep || "";
+        $("mWaterIn").value = r?.water || "";
+        $("mCalIn").value = r?.calories || "";
+        $("mNotesIn").value = r?.notes || "";
+        $("mNotesCount").textContent = (r?.notes || "").length;
+
+        updateProt("modal");
+        updateSleep("modal");
+        updateWater("modal");
+
+        // Only disable save for future days that are NOT the competition day
+        const isComp = key === toKey(COMP);
+        $("sheetBtn").disabled = isFuture && !isComp;
+
+        $("overlay").classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeSheet() {
+        $("overlay").classList.remove("open");
+        document.body.style.overflow = "";
+        sheetKey = null;
+      }
+
+      /* ── Toast ─────────────────────────────────────────────── */
+      function showToast(msg) {
+        const el = $("toast");
+        el.textContent = msg;
+        el.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.classList.remove("show"), 3000);
+      }
+
+      /* ── Event listeners ───────────────────────────────────── */
+      // Toggles - today
+      $("soberMain").addEventListener("click", () =>
+        toggle(
+          "soberMain",
+          () => mainSober,
+          (v) => (mainSober = v),
+        ),
+      );
+      $("creatMain").addEventListener("click", () =>
+        toggle(
+          "creatMain",
+          () => mainCreat,
+          (v) => (mainCreat = v),
+        ),
+      );
+
+      // Toggles - modal
+      $("soberModal").addEventListener("click", () =>
+        toggle(
+          "soberModal",
+          () => modalSober,
+          (v) => (modalSober = v),
+        ),
+      );
+      $("creatModal").addEventListener("click", () =>
+        toggle(
+          "creatModal",
+          () => modalCreat,
+          (v) => (modalCreat = v),
+        ),
+      );
+
+      // Progress bars - today
+      $("protIn").addEventListener("input", () => updateProt("main"));
+      $("sleepIn").addEventListener("input", () => updateSleep("main"));
+      $("waterIn").addEventListener("input", () => updateWater("main"));
+
+      // Progress bars - modal
+      $("mProtIn").addEventListener("input", () => updateProt("modal"));
+      $("mSleepIn").addEventListener("input", () => updateSleep("modal"));
+      $("mWaterIn").addEventListener("input", () => updateWater("modal"));
+
+      // Notes counters
+      $("notesIn").addEventListener("input", () => {
+        $("notesCount").textContent = $("notesIn").value.length;
+      });
+      $("mNotesIn").addEventListener("input", () => {
+        $("mNotesCount").textContent = $("mNotesIn").value.length;
+      });
+
+      // Save buttons
+      $("saveMainBtn").addEventListener("click", () => save("main"));
+      $("sheetBtn").addEventListener("click", () => save("modal"));
+
+      // Sheet close
+      $("sheetClose").addEventListener("click", closeSheet);
+      $("overlay").addEventListener("click", (e) => {
+        if (e.target === $("overlay")) closeSheet();
+      });
+
+      /* ── Service Worker ────────────────────────────────────── */
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
+      }
+
+      /* ── Initial render ────────────────────────────────────── */
+      render();
+    </script>
+  </body>
+</html>
