@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <!-- Snow cap: white top, blue-grey shadow at base -->
+    <linearGradient id="snowGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#edf2fc"/>
+      <stop offset="100%" stop-color="#c3d0e8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" fill="#07070f"/>
+
+  <!-- Mount Fuji silhouette
+       Peak (256,128) · left slope → (0,468) · right slope (symmetric) -->
+  <path
+    d="M 256 128
+       C 228 186, 142 358, 0 468
+       L 0 512 L 512 512 L 512 468
+       C 370 358, 284 186, 256 128 Z"
+    fill="#14142c"
+  />
+
+  <!-- Snow cap  (de Casteljau split of each slope at t=0.27, y≈196)
+       left edge: C 248 144, 236 168, 221 196
+       snow base: Q 256 206, 292 196  (slight convex curve)
+       right edge reversed: C 276 168, 264 144, 256 128 -->
+  <path
+    d="M 256 128
+       C 248 144, 236 168, 221 196
+       Q 256 206, 292 196
+       C 276 168, 264 144, 256 128 Z"
+    fill="url(#snowGrad)"
+  />
+
+  <!-- "P" brand mark — centered in the snow cap -->
+  <text
+    x="256" y="162"
+    font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif"
+    font-weight="700"
+    font-size="30"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    fill="#00dc82"
+  >P</text>
+</svg>
