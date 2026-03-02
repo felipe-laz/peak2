@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Migração — Felipe</title>
+    <style>
+      body { font-family: monospace; background: #000; color: #eee; padding: 32px; line-height: 1.6; }
+      h2   { color: #00dc82; margin-bottom: 8px; }
+      p    { color: #888; margin-bottom: 24px; font-size: 14px; }
+      button {
+        padding: 12px 28px; background: #00dc82; color: #000;
+        border: none; cursor: pointer; font-size: 15px; font-weight: 700;
+        border-radius: 8px; margin-bottom: 24px;
+      }
+      button:disabled { opacity: 0.4; cursor: default; }
+      pre  { font-size: 13px; }
+      .ok  { color: #00dc82; }
+      .err { color: #ff4444; }
+      .dim { color: #555; }
+    </style>
+  </head>
+  <body>
+    <h2>Migração — Felipe</h2>
+    <p>
+      Copia todos os documentos de <code>peak30/*</code> para
+      <code>users/felipe/peak30/*</code> no mesmo Firebase.<br />
+      Execute apenas uma vez. Os dados originais NÃO são apagados.
+    </p>
+    <button id="btn">Iniciar Migração</button>
+    <pre id="log"></pre>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+        doc,
+        setDoc,
+      } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+      const config = {
+        apiKey: "AIzaSyCQAp_eIn27MEmSJMw4t8jrcOc13t6ou2I",
+        authDomain: "peak-e1e59.firebaseapp.com",
+        projectId: "peak-e1e59",
+        storageBucket: "peak-e1e59.firebasestorage.app",
+        messagingSenderId: "535257642877",
+        appId: "1:535257642877:web:3893feefedbf2dd7bb7e14",
+      };
+
+      const app = initializeApp(config);
+      const db = getFirestore(app);
+      const log = document.getElementById("log");
+      const btn = document.getElementById("btn");
+
+      function write(msg, cls = "dim") {
+        log.innerHTML += `<span class="${cls}">${msg}\n</span>`;
+      }
+
+      btn.addEventListener("click", async () => {
+        btn.disabled = true;
+        write("Lendo peak30...");
+
+        try {
+          const snap = await getDocs(collection(db, "peak30"));
+
+          if (snap.empty) {
+            write("Nenhum documento encontrado em peak30.", "err");
+            btn.disabled = false;
+            return;
+          }
+
+          write(`${snap.size} documentos encontrados.\n`);
+
+          let ok = 0, err = 0;
+
+          for (const docSnap of snap.docs) {
+            const id = docSnap.id;
+            const data = docSnap.data();
+            try {
+              await setDoc(doc(db, "users", "felipe", "peak30", id), data);
+              write(`✓  ${id}`, "ok");
+              ok++;
+            } catch (e) {
+              write(`✗  ${id}: ${e.message}`, "err");
+              err++;
+            }
+          }
+
+          write(`\n${ok} migrados  |  ${err} erros`, ok === snap.size ? "ok" : "err");
+
+          if (err === 0) {
+            write("\nMigração concluída! Pode fechar esta página.", "ok");
+          }
+        } catch (e) {
+          write(`Erro ao ler Firestore: ${e.message}`, "err");
+          btn.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

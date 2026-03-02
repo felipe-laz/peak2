@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Migração — Diogo</title>
+    <style>
+      body { font-family: monospace; background: #000; color: #eee; padding: 32px; line-height: 1.6; }
+      h2   { color: #00dc82; margin-bottom: 8px; }
+      p    { color: #888; margin-bottom: 16px; font-size: 14px; }
+      .warn { color: #f5a623; background: rgba(245,166,35,0.1); border: 1px solid rgba(245,166,35,0.3); padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; font-size: 13px; }
+      button {
+        padding: 12px 28px; background: #00dc82; color: #000;
+        border: none; cursor: pointer; font-size: 15px; font-weight: 700;
+        border-radius: 8px; margin-bottom: 24px;
+      }
+      button:disabled { opacity: 0.4; cursor: default; }
+      pre  { font-size: 13px; }
+      .ok  { color: #00dc82; }
+      .err { color: #ff4444; }
+      .dim { color: #555; }
+    </style>
+  </head>
+  <body>
+    <h2>Migração — Diogo</h2>
+    <p>
+      Lê os dados do Firebase antigo do Diogo e escreve em
+      <code>users/diogo/peak30/*</code> no Firebase compartilhado.
+    </p>
+    <div class="warn">
+      ⚠️ Antes de rodar, preencha a constante <code>DIOGO_CONFIG</code>
+      abaixo com a config do Firebase que está no app do Diogo (Project Settings → Your apps).
+    </div>
+    <button id="btn">Iniciar Migração</button>
+    <pre id="log"></pre>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+        doc,
+        setDoc,
+      } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+      // ── PREENCHER com a config do Firebase antigo do Diogo ──────────
+      const DIOGO_CONFIG = {
+        apiKey: "COLE_AQUI",
+        authDomain: "COLE_AQUI.firebaseapp.com",
+        projectId: "COLE_AQUI",
+        storageBucket: "COLE_AQUI.firebasestorage.app",
+        messagingSenderId: "COLE_AQUI",
+        appId: "COLE_AQUI",
+      };
+      // ────────────────────────────────────────────────────────────────
+
+      // Firebase compartilhado (projeto do Felipe)
+      const SHARED_CONFIG = {
+        apiKey: "AIzaSyCQAp_eIn27MEmSJMw4t8jrcOc13t6ou2I",
+        authDomain: "peak-e1e59.firebaseapp.com",
+        projectId: "peak-e1e59",
+        storageBucket: "peak-e1e59.firebasestorage.app",
+        messagingSenderId: "535257642877",
+        appId: "1:535257642877:web:3893feefedbf2dd7bb7e14",
+      };
+
+      const srcApp    = initializeApp(DIOGO_CONFIG, "diogo-source");
+      const sharedApp = initializeApp(SHARED_CONFIG, "shared");
+      const srcDb     = getFirestore(srcApp);
+      const sharedDb  = getFirestore(sharedApp);
+
+      const log = document.getElementById("log");
+      const btn = document.getElementById("btn");
+
+      function write(msg, cls = "dim") {
+        log.innerHTML += `<span class="${cls}">${msg}\n</span>`;
+      }
+
+      btn.addEventListener("click", async () => {
+        if (DIOGO_CONFIG.apiKey === "COLE_AQUI") {
+          write("ERRO: Preencha DIOGO_CONFIG com a config real antes de rodar.", "err");
+          return;
+        }
+
+        btn.disabled = true;
+        write("Lendo peak30 do Firebase do Diogo...");
+
+        try {
+          const snap = await getDocs(collection(srcDb, "peak30"));
+
+          if (snap.empty) {
+            write("Nenhum documento encontrado.", "err");
+            btn.disabled = false;
+            return;
+          }
+
+          write(`${snap.size} documentos encontrados.\n`);
+
+          let ok = 0, err = 0;
+
+          for (const docSnap of snap.docs) {
+            const id = docSnap.id;
+            const data = docSnap.data();
+            try {
+              await setDoc(doc(sharedDb, "users", "diogo", "peak30", id), data);
+              write(`✓  ${id}`, "ok");
+              ok++;
+            } catch (e) {
+              write(`✗  ${id}: ${e.message}`, "err");
+              err++;
+            }
+          }
+
+          write(`\n${ok} migrados  |  ${err} erros`, ok === snap.size ? "ok" : "err");
+
+          if (err === 0) {
+            write("\nMigração concluída! Pode fechar esta página.", "ok");
+          }
+        } catch (e) {
+          write(`Erro ao ler Firestore: ${e.message}`, "err");
+          btn.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

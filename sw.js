@@ -1,5 +1,5 @@
-const CACHE = 'peak-v4';
-const SHELL = ['/', '/index.html', '/manifest.json',
+const CACHE = 'peak-v5';
+const SHELL = ['/', '/index.html', '/manifest.json', '/quotes.json',
                '/apple-touch-icon.png', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', e => {
